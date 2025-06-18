@@ -1,0 +1,32 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{366D874F-0D43-451E-B5A7-6101F5E55BC2}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "samples", "samples", "{D55002FE-3366-4947-9CFA-4379030FA6E5}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{15EE305B-929A-48D2-9934-5719D1BC696A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LocationTracking", "LocationTracking\LocationTracking.csproj", "{5501198A-37BF-4B42-B2DA-67D0CD19134B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LocationSample", "LocationSample\LocationSample.csproj", "{A5DF85F6-484B-4995-AA6C-1982D9253A8D}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{5501198A-37BF-4B42-B2DA-67D0CD19134B} = {366D874F-0D43-451E-B5A7-6101F5E55BC2}
+		{A5DF85F6-484B-4995-AA6C-1982D9253A8D} = {D55002FE-3366-4947-9CFA-4379030FA6E5}
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{5501198A-37BF-4B42-B2DA-67D0CD19134B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5501198A-37BF-4B42-B2DA-67D0CD19134B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5501198A-37BF-4B42-B2DA-67D0CD19134B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5501198A-37BF-4B42-B2DA-67D0CD19134B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A5DF85F6-484B-4995-AA6C-1982D9253A8D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A5DF85F6-484B-4995-AA6C-1982D9253A8D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A5DF85F6-484B-4995-AA6C-1982D9253A8D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A5DF85F6-484B-4995-AA6C-1982D9253A8D}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal
