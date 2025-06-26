@@ -21,7 +21,7 @@ public class LocationTrackerManager(ILocationLogger logger, LocationTrackingOpti
     private LocationCallback? _locationCallback;
 
     public bool IsTracking { get; private set; }
-    
+
     public async Task StartTrackingAsync()
     {
         if (IsTracking) return;

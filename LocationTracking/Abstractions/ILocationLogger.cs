@@ -1,28 +1,24 @@
-using System.Collections.Generic;
-using System.Threading.Tasks;
 using LocationTracking.Models;
 
 namespace LocationTracking.Abstractions;
 
+/// <summary>
+/// Handles persistence and retrieval of location tracking logs.
+/// </summary>
 public interface ILocationLogger
 {
     /// <summary>
     /// Logs a new tracked location.
     /// </summary>
-    Task LogAsync(TrackedLocation location);
+    internal Task LogAsync(TrackedLocation location);
 
     /// <summary>
     /// Returns all logged locations.
     /// </summary>
-    Task<IEnumerable<TrackedLocation>> GetAllLogsAsync();
+    Task<IEnumerable<TrackedLocation>> GetAllLocationTraceAsync();
 
     /// <summary>
     /// Clears all stored location logs.
     /// </summary>
     Task ClearLogsAsync();
-
-    /// <summary>
-    /// Export logs (e.g., as a file path or shareable data).
-    /// </summary>
-    Task<string> ExportLogsAsync();
 }

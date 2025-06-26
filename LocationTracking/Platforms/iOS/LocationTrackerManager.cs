@@ -1,5 +1,3 @@
-using System;
-using System.Threading.Tasks;
 using CoreLocation;
 using Foundation;
 using LocationTracking.Abstractions;
@@ -12,15 +10,15 @@ namespace LocationTracking;
 /// <summary>
 /// iOS implementation of ILocationTracker using CLLocationManager.
 /// </summary>
-public class LocationTrackerManager : NSObject, ILocationTracker, ICLLocationManagerDelegate
+internal class LocationTrackerManager : NSObject, ILocationTracker, ICLLocationManagerDelegate
 {
     private readonly CLLocationManager _locationManager;
     private readonly ILocationLogger _logger;
     private readonly LocationTrackingOptions _options;
     
     public bool IsTracking { get; private set; }
-    
-    public LocationTrackerManager(ILocationLogger logger, LocationTrackingOptions options)
+
+    internal LocationTrackerManager(ILocationLogger logger, LocationTrackingOptions options)
     {
         _logger = logger;
         _options = options;
@@ -62,6 +60,8 @@ public class LocationTrackerManager : NSObject, ILocationTracker, ICLLocationMan
         IsTracking = false;
         return Task.CompletedTask;
     }
+    
+    public Task<IEnumerable<TrackedLocation>> GetAllLocationTraceAsync() => _logger.GetAllLocationTraceAsync();
 
     private CLAuthorizationStatus GetLocationAuthorizationStatus() =>
         OperatingSystem.IsIOSVersionAtLeast(14) ? _locationManager.AuthorizationStatus : CLLocationManager.Status;
@@ -76,7 +76,7 @@ public class LocationTrackerManager : NSObject, ILocationTracker, ICLLocationMan
     };
     
     [Export("locationManager:didUpdateLocations:")]
-    public async void LocationManagerDidUpdateLocations(CLLocationManager manager, CLLocation[] locations)
+    internal async void LocationManagerDidUpdateLocations(CLLocationManager manager, CLLocation[] locations)
     {
         try
         {

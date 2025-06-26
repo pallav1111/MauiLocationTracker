@@ -17,7 +17,8 @@ public class LocationTrackerManager : NSObject, ILocationTracker, ICLLocationMan
     private readonly LocationTrackingOptions _options;
     
     public bool IsTracking { get; private set; }
-    
+    public Task<IEnumerable<TrackedLocation>> GetAllLocationTraceAsync() => _logger.GetAllLocationTraceAsync();
+
     public LocationTrackerManager(ILocationLogger logger, LocationTrackingOptions options)
     {
         _logger = logger;

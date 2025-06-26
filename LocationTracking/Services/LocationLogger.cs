@@ -7,31 +7,27 @@ namespace LocationTracking.Services;
 /// <summary>
 /// Logs locations to a local file in JSON format and provides access/export features.
 /// </summary>
-public class LocationLogger : ILocationLogger
+internal class LocationLogger : ILocationLogger
 {
     private readonly string _logFilePath;
     private readonly SemaphoreSlim _semaphore = new(1, 1);
 
     public LocationLogger()
     {
-        var logFileName = "tracked_locations.json";
         var localFolder = FileSystem.AppDataDirectory;
-        _logFilePath = Path.Combine(localFolder, logFileName);
+        _logFilePath = Path.Combine(localFolder, "tracked_locations.json");
     }
+#region Location Logs
 
     public async Task LogAsync(TrackedLocation location)
     {
         await _semaphore.WaitAsync();
         try
         {
-            var locations = (await ReadLogsInternalAsync()).ToList();
-            locations.Add(location);
+            var logs = (await ReadLogsInternalAsync()).ToList();
+            logs.Add(location);
 
-            var json = JsonSerializer.Serialize(locations, new JsonSerializerOptions
-            {
-                WriteIndented = true
-            });
-
+            var json = JsonSerializer.Serialize(logs, new JsonSerializerOptions { WriteIndented = true });
             await File.WriteAllTextAsync(_logFilePath, json);
         }
         finally
@@ -40,7 +36,7 @@ public class LocationLogger : ILocationLogger
         }
     }
 
-    public async Task<IEnumerable<TrackedLocation>> GetAllLogsAsync()
+    public async Task<IEnumerable<TrackedLocation>> GetAllLocationTraceAsync()
     {
         await _semaphore.WaitAsync();
         try
@@ -67,11 +63,7 @@ public class LocationLogger : ILocationLogger
         }
     }
 
-    public Task<string> ExportLogsAsync()
-    {
-        // Just return the log file path (could also zip/email/share, later)
-        return Task.FromResult(_logFilePath);
-    }
+    public Task<string> ExportLogsAsync() => Task.FromResult(_logFilePath);
 
     private async Task<IEnumerable<TrackedLocation>> ReadLogsInternalAsync()
     {
@@ -84,13 +76,13 @@ public class LocationLogger : ILocationLogger
 
         try
         {
-            var locations = JsonSerializer.Deserialize<List<TrackedLocation>>(json);
-            return locations ?? Enumerable.Empty<TrackedLocation>();
+            return JsonSerializer.Deserialize<List<TrackedLocation>>(json) ?? [];
         }
         catch
         {
-            // Corrupted file fallback
             return [];
         }
     }
+
+    #endregion
 }

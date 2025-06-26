@@ -12,7 +12,7 @@ public partial class MainPageModel(
     CategoryRepository categoryRepository,
     ModalErrorHandler errorHandler,
     ILocationTracker tracker,
-        ILocationLogger logger)
+    ILocationLogger logger)
     : ObservableObject, IProjectTaskPageModel
 {
     private bool _isNavigatedTo;
@@ -97,7 +97,7 @@ public partial class MainPageModel(
     [RelayCommand]
     private async Task GetLogs()
     {
-        var locations = await logger.GetAllLogsAsync();
+        var locations = await logger.GetAllLocationTraceAsync();
         var logsText = string.Join(Environment.NewLine, 
             locations.Select(loc => 
                 $"{loc.Timestamp:g}: Lat {loc.Latitude:F4}, Long {loc.Longitude:F4}, Accuracy {loc.Accuracy:F4}, Altitude {loc.Altitude:F4}, Source {loc.Source}"));

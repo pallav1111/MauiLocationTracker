@@ -1,5 +1,6 @@
 using System.Threading.Tasks;
 using LocationTracking.Configuration;
+using LocationTracking.Models;
 
 namespace LocationTracking.Abstractions;
 

@@ -34,6 +34,8 @@ bld/
 
 # Visual Studio 2015 cache/options directory
 .vs/
+.idea/
+.DS_Store
 
 # .NET Core
 project.lock.json
@@ -73,3 +75,4 @@ nunit-*.xml
 # Datasource local storage ignored files
 /dataSources/
 /dataSources.local.xml
+.idea/.idea.MauiLocationTracker/.idea/workspace.xml
