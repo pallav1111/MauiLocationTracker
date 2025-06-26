@@ -1,0 +1,39 @@
+name: 🚀 Build & Publish NuGet Package
+
+on:
+  push:
+    branches:
+      - main
+  release:
+    types: [published]
+
+jobs:
+  build:
+    name: 🛠 Build & Publish
+    runs-on: ubuntu-latest
+
+    env:
+      NUGET_API_KEY: ${{ secrets.NUGET_API_KEY }}
+      PACKAGE_OUTPUT_PATH: ./output
+
+    steps:
+      - name: 📥 Checkout code
+        uses: actions/checkout@v3
+
+      - name: 🧰 Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '9.0.300'
+
+      - name: 📦 Restore dependencies
+        run: dotnet restore
+
+      - name: 🏗 Build
+        run: dotnet build src/MauiLocationTracker/MauiLocationTracker.csproj --configuration Release --no-restore
+
+      - name: 📚 Pack NuGet package
+        run: dotnet pack src/MauiLocationTracker/MauiLocationTracker.csproj --configuration Release --output $PACKAGE_OUTPUT_PATH
+
+      - name: 🚀 Publish to NuGet
+        run: dotnet nuget push $PACKAGE_OUTPUT_PATH/*.nupkg --api-key $NUGET_API_KEY --source https://api.nuget.org/v3/index.json
+        if: github.event_name == 'release'
