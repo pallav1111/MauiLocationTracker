@@ -2,21 +2,20 @@
 # <img src="https://raw.githubusercontent.com/pallav1111/MauiLocationTracker/main/logo.png" alt="Logo" width="100"/>
 MauiLocationTracker
 
-**Cross-platform location tracking library for .NET MAUI**
-Provides seamless background location updates on **Android** and **iOS**, with support for event-based live tracking, persistent logging, and export features.
+A lightweight, cross-platform **.NET MAUI library** for tracking user location in the foreground and background on **Android** and **iOS**. Built for developers who want simple, observable, and extensible location tracking with optional logging.
+
+[![NuGet](https://img.shields.io/nuget/v/MauiLocationTracker.svg)](https://www.nuget.org/packages/MauiLocationTracker)
 
 ---
 
 ## ✨ Features
 
-* ✅ Background location tracking
-* ✅ Continues tracking even when the app is minimized
-* ✅ Foreground service support on Android
-* ✅ CLLocationManager-based tracking on iOS
-* ✅ Internal logging of tracked locations (in JSON format)
-* ✅ Export and clear logs
-* ✅ Realtime location updates via `LocationEventHub`
-* ✅ Easy integration with .NET MAUI (Android & iOS)
+- ✅ Cross-platform support (Android & iOS)
+- 🛰️ Background location tracking (via ForegroundService on Android)
+- 🔔 Live location update events
+- 📁 Internal logging to local file (optional)
+- 💡 Simple API via `ILocationTracker` interface
+- ⚙️ Configurable tracking options: interval, accuracy, background behavior
 
 ---
 
@@ -24,17 +23,15 @@ Provides seamless background location updates on **Android** and **iOS**, with s
 
 ```bash
 dotnet add package MauiLocationTracker
-```
+````
 
-Or search for `MauiLocationTracker` on [NuGet](https://www.nuget.org/packages/MauiLocationTracker).
+Or use the NuGet Package Manager in Visual Studio.
 
 ---
 
-## ⚙️ Configuration
+## 🚀 Getting Started
 
-### Register Services
-
-In your `MauiProgram.cs`:
+1. **Register services**
 
 ```csharp
 using LocationTracking;
@@ -42,115 +39,86 @@ using LocationTracking;
 builder.Services.AddLocationTracking();
 ```
 
-This registers:
-
-* `ILocationTracker` — controls location tracking lifecycle
-* `ILocationLogger` — handles log persistence
-* `LocationEventHub` — broadcasts location updates
-
----
-
-## 📍 Basic Usage
-
-### Start Tracking
+2. **Request location permissions**
 
 ```csharp
-private readonly ILocationTracker _tracker;
+await Permissions.RequestAsync<Permissions.LocationAlways>();
+```
 
-public YourPage(ILocationTracker tracker)
-{
-    _tracker = tracker;
-}
+3. **Start tracking**
 
+```csharp
 await _tracker.StartTrackingAsync();
 ```
 
-### Stop Tracking
-
-```csharp
-await _tracker.StopTrackingAsync();
-```
-
----
-
-## ⚡ Live Location Updates
-
-Subscribe to location changes:
+4. **Listen to live updates**
 
 ```csharp
 LocationEventHub.OnLocationReceived += location =>
 {
-    Console.WriteLine($"Location: {location.Latitude}, {location.Longitude}");
+    Console.WriteLine($"Lat: {location.Latitude}, Lng: {location.Longitude}");
 };
 ```
 
-Unsubscribe when no longer needed:
-
-```csharp
-LocationEventHub.OnLocationReceived -= yourHandler;
-```
+📖 Full docs: [Getting Started](docs/getting-started.md)
 
 ---
 
-## 🧾 Working with Logs
+## ⚙️ Configuration
 
-### Read all logs:
-
-```csharp
-var logs = await locationLogger.GetAllLocationTraceAsync();
-```
-
-### Clear stored logs:
+Configure the tracking via `LocationTrackingOptions`:
 
 ```csharp
-await locationLogger.ClearLogsAsync();
+builder.Services.AddLocationTracking(options =>
+{
+    options.Interval = TimeSpan.FromMinutes(2);
+    options.Accuracy = LocationAccuracy.High;
+    options.EnableBackgroundTracking = true;
+});
 ```
 
-### Export log file path:
-
-```csharp
-var path = await locationLogger.ExportLogsAsync();
-```
+📘 See [Configuration](docs/configuration.md)
 
 ---
 
-## 🛠 Android Setup
+## 📱 Platform Setup
 
-In your \*\*app project’s \*\*\`AndroidManifest.xml`:
+Make sure you configure:
 
-```xml
-<uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
-<uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
-<uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION" />
-<uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
-<uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
-<uses-permission android:name="android.permission.WAKE_LOCK" />
-```
+* `AndroidManifest.xml`: location permissions + foreground service
+* `Info.plist` for iOS: location background modes & usage description
+
+🧭 See [Platform Setup Guide](docs/platform-setup.md)
 
 ---
 
-## 🍏 iOS Setup
+## 🧪 Advanced Usage
 
-In your \`Info.plist`:
+* Access logged data
+* Export logs
+* Customize logger
 
-```xml
-<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
-<string>We need your location for background tracking.</string>
-<key>UIBackgroundModes</key>
-<array>
-    <string>location</string>
-</array>
-```
+🧠 [Advanced Usage](docs/advanced-usage.md)
 
 ---
 
-## ✅ Roadmap
+## 🛠 Troubleshooting
 
-* Android/iOS background tracking ✅
+* App killed = background tracking stops on Android unless JobScheduler is configured.
+* iOS requires correct background modes.
+* Ensure permissions are requested **before** starting tracking.
 
-* Event-based update support ✅
+🆘 [Troubleshooting Guide](docs/troubleshooting.md)
 
-* desktop support
+---
 
-...... Loading
+## 🙋 Contributing
 
+Have an idea or bug to report?
+Feel free to [open an issue](https://github.com/pallav1111/MauiLocationTracker/issues) or submit a PR!
+
+---
+
+## 📃 License
+
+MIT ©
