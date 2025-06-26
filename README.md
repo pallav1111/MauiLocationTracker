@@ -4,7 +4,7 @@ MauiLocationTracker
 
 A lightweight, cross-platform **.NET MAUI library** for tracking user location in the foreground and background on **Android** and **iOS**. Built for developers who want simple, observable, and extensible location tracking with optional logging.
 
-[![NuGet](https://img.shields.io/nuget/v/MauiLocationTracker.svg)](https://www.nuget.org/packages/MauiLocationTracker)
+[![NuGet](https://img.shields.io/nuget/v/LocationTracking.svg)](https://www.nuget.org/packages/LocationTracking)
 
 ---
 
