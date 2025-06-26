@@ -7,6 +7,7 @@ using Android.OS;
 using LocationTracking.Abstractions;
 using LocationTracking.Configuration;
 using LocationTracking.Enums;
+using LocationTracking.Events;
 using LocationTracking.Models;
 
 namespace LocationTracking.Services;
@@ -169,19 +170,27 @@ internal class LocationCallbackImpl(ILocationLogger logger) : LocationCallback
 {
     public override async void OnLocationResult(LocationResult result)
     {
-        foreach (var loc in result.Locations)
+        try
         {
-            var tracked = new TrackedLocation
+            foreach (var loc in result.Locations)
             {
-                Latitude = loc.Latitude,
-                Longitude = loc.Longitude,
-                Accuracy = loc.HasAccuracy ? loc.Accuracy : null,
-                Altitude = loc.HasAltitude ? loc.Altitude : null,
-                Timestamp = DateTime.UtcNow,
-                Source = "AndroidService"
-            };
+                var tracked = new TrackedLocation
+                {
+                    Latitude = loc.Latitude,
+                    Longitude = loc.Longitude,
+                    Accuracy = loc.HasAccuracy ? loc.Accuracy : null,
+                    Altitude = loc.HasAltitude ? loc.Altitude : null,
+                    Timestamp = DateTime.UtcNow,
+                    Source = "AndroidService"
+                };
 
-            await logger.LogAsync(tracked);
+                await logger.LogAsync(tracked);
+                LocationEventHub.Raise(tracked);
+            }
+        }
+        catch (Exception)
+        {
+            // Ignored
         }
     }
 }

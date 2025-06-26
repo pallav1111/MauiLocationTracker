@@ -4,8 +4,10 @@ using Android.OS;
 using LocationTracking.Abstractions;
 using LocationTracking.Configuration;
 using LocationTracking.Enums;
+using LocationTracking.Events;
 using LocationTracking.Models;
 using LocationTracking.Services;
+using Microsoft.Maui.Controls.PlatformConfiguration;
 
 namespace LocationTracking;
 
@@ -112,6 +114,7 @@ public class LocationTrackerManager(ILocationLogger logger, LocationTrackingOpti
                     };
 
                     await logger.LogAsync(tracked);
+                    LocationEventHub.Raise(tracked);
                 }
             }
             catch (Exception)

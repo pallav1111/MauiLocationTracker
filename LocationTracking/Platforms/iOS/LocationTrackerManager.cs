@@ -3,6 +3,7 @@ using Foundation;
 using LocationTracking.Abstractions;
 using LocationTracking.Configuration;
 using LocationTracking.Enums;
+using LocationTracking.Events;
 using LocationTracking.Models;
 
 namespace LocationTracking;
@@ -93,6 +94,7 @@ internal class LocationTrackerManager : NSObject, ILocationTracker, ICLLocationM
                 };
 
                 await _logger.LogAsync(tracked);
+                LocationEventHub.Raise(tracked);
             }
         }
         catch (Exception e)
