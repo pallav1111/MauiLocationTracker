@@ -10,6 +10,11 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LocationTracking", "Locatio
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LocationSample", "LocationSample\LocationSample.csproj", "{A5DF85F6-484B-4995-AA6C-1982D9253A8D}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "docs", "docs", "{639976E2-206D-4FDE-A5C5-427B9F551E00}"
+	ProjectSection(SolutionItems) = preProject
+		docs\getting-started.md = docs\getting-started.md
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
