@@ -1,5 +1,3 @@
-using System;
-
 namespace LocationTracking.Models;
 
 public class TrackedLocation

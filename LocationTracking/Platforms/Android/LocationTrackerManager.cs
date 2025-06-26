@@ -10,15 +10,15 @@ using LocationTracking.Services;
 namespace LocationTracking;
 
 /// <summary>
-/// Android implementation of ILocationTracker using FusedLocationProviderClient.
+///     Android implementation of ILocationTracker using FusedLocationProviderClient.
 /// </summary>
 public class LocationTrackerManager(ILocationLogger logger, LocationTrackingOptions options) : ILocationTracker
 {
     private readonly Context _context = Android.App.Application.Context;
+    private LocationCallback? _locationCallback;
 
     private IFusedLocationProviderClient? _locationClient;
     private LocationRequest? _locationRequest;
-    private LocationCallback? _locationCallback;
 
     public bool IsTracking { get; private set; }
 
@@ -39,15 +39,16 @@ public class LocationTrackerManager(ILocationLogger logger, LocationTrackingOpti
         {
             _locationClient ??= LocationServices.GetFusedLocationProviderClient(_context);
 
-            _locationRequest = new LocationRequest.Builder(GetPriority(options.Accuracy), (long)options.Interval.TotalMilliseconds)
-                .SetMinUpdateIntervalMillis((long)(options.Interval.TotalMilliseconds / 2))
-                .Build();
+            _locationRequest =
+                new LocationRequest.Builder(GetPriority(options.Accuracy), (long)options.Interval.TotalMilliseconds)
+                    .SetMinUpdateIntervalMillis((long)(options.Interval.TotalMilliseconds / 2))
+                    .Build();
 
             _locationCallback = new FusedLocationCallback(logger);
 
             _locationClient.RequestLocationUpdates(_locationRequest, _locationCallback, Looper.MainLooper);
         }
-        
+
         IsTracking = true;
     }
 
@@ -57,7 +58,7 @@ public class LocationTrackerManager(ILocationLogger logger, LocationTrackingOpti
 
         var intent = new Intent(_context, typeof(AndroidLocationService));
         _context.StopService(intent);
-        
+
         if (_locationClient != null && _locationCallback != null)
         {
             await _locationClient.RemoveLocationUpdatesAsync(_locationCallback);
@@ -83,11 +84,12 @@ public class LocationTrackerManager(ILocationLogger logger, LocationTrackingOpti
         {
             status = await Permissions.RequestAsync<Permissions.LocationAlways>();
         }
+
         return status == PermissionStatus.Granted;
     }
 
     /// <summary>
-    /// Internal callback to handle received location updates.
+    ///     Internal callback to handle received location updates.
     /// </summary>
     private sealed class FusedLocationCallback(ILocationLogger logger) : LocationCallback
     {

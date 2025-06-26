@@ -1,27 +1,23 @@
-using System.Threading.Tasks;
-using LocationTracking.Configuration;
-using LocationTracking.Models;
-
 namespace LocationTracking.Abstractions;
 
 /// <summary>
-/// Abstraction for starting and stopping location tracking.
-/// Platform-specific implementations will use this contract.
+///     Abstraction for starting and stopping location tracking.
+///     Platform-specific implementations will use this contract.
 /// </summary>
 public interface ILocationTracker
 {
     /// <summary>
-    /// Starts location tracking with current configuration.
+    ///     Checks if tracking is currently active.
+    /// </summary>
+    bool IsTracking { get; }
+
+    /// <summary>
+    ///     Starts location tracking with current configuration.
     /// </summary>
     Task StartTrackingAsync();
 
     /// <summary>
-    /// Stops location tracking.
+    ///     Stops location tracking.
     /// </summary>
     Task StopTrackingAsync();
-
-    /// <summary>
-    /// Checks if tracking is currently active.
-    /// </summary>
-    bool IsTracking { get; }
 }

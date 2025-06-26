@@ -8,18 +8,15 @@ using LocationTracking.Models;
 namespace LocationTracking;
 
 /// <summary>
-/// macOS Catalyst implementation of ILocationTracker using CLLocationManager.
+///     macOS Catalyst implementation of ILocationTracker using CLLocationManager.
 /// </summary>
-public class LocationTrackerManager : NSObject, ILocationTracker, ICLLocationManagerDelegate
+internal class LocationTrackerManager : NSObject, ILocationTracker, ICLLocationManagerDelegate
 {
     private readonly CLLocationManager _locationManager;
     private readonly ILocationLogger _logger;
     private readonly LocationTrackingOptions _options;
-    
-    public bool IsTracking { get; private set; }
-    public Task<IEnumerable<TrackedLocation>> GetAllLocationTraceAsync() => _logger.GetAllLocationTraceAsync();
 
-    public LocationTrackerManager(ILocationLogger logger, LocationTrackingOptions options)
+    internal LocationTrackerManager(ILocationLogger logger, LocationTrackingOptions options)
     {
         _logger = logger;
         _options = options;
@@ -30,7 +27,15 @@ public class LocationTrackerManager : NSObject, ILocationTracker, ICLLocationMan
 
         _locationManager.Delegate = this;
     }
-    
+
+    [Export("locationManager:didFailWithError:")]
+    public void Failed(CLLocationManager manager, NSError error)
+    {
+        Console.WriteLine($"Mac Location error: {error.LocalizedDescription}");
+    }
+
+    public bool IsTracking { get; private set; }
+
     public async Task StartTrackingAsync()
     {
         if (IsTracking) return;
@@ -59,20 +64,32 @@ public class LocationTrackerManager : NSObject, ILocationTracker, ICLLocationMan
         IsTracking = false;
         return Task.CompletedTask;
     }
-    
-    private CLAuthorizationStatus GetLocationAuthorizationStatus() =>
-        OperatingSystem.IsIOSVersionAtLeast(14) ? _locationManager.AuthorizationStatus : CLLocationManager.Status;
-    
-    private static double GetAccuracy(LocationAccuracy accuracy) => accuracy switch
+
+    public Task<IEnumerable<TrackedLocation>> GetAllLocationTraceAsync()
     {
-        LocationAccuracy.Lowest => 3000,
-        LocationAccuracy.Low => 1000,
-        LocationAccuracy.Balanced => 100,
-        LocationAccuracy.High => 10,
-        LocationAccuracy.Best => CLLocation.AccuracyBest,
-        _ => 100
-    };
-    
+        return _logger.GetAllLocationTraceAsync();
+    }
+
+    private CLAuthorizationStatus GetLocationAuthorizationStatus()
+    {
+        return OperatingSystem.IsIOSVersionAtLeast(14)
+            ? _locationManager.AuthorizationStatus
+            : CLLocationManager.Status;
+    }
+
+    private static double GetAccuracy(LocationAccuracy accuracy)
+    {
+        return accuracy switch
+        {
+            LocationAccuracy.Lowest => 3000,
+            LocationAccuracy.Low => 1000,
+            LocationAccuracy.Balanced => 100,
+            LocationAccuracy.High => 10,
+            LocationAccuracy.Best => CLLocation.AccuracyBest,
+            _ => 100
+        };
+    }
+
     [Export("locationManager:didUpdateLocations:")]
     public async void UpdatedLocation(CLLocationManager manager, CLLocation[] locations)
     {
@@ -97,11 +114,5 @@ public class LocationTrackerManager : NSObject, ILocationTracker, ICLLocationMan
         {
             // Ignored
         }
-    }
-
-    [Export("locationManager:didFailWithError:")]
-    public void Failed(CLLocationManager manager, NSError error)
-    {
-        Console.WriteLine($"Mac Location error: {error.LocalizedDescription}");
     }
 }

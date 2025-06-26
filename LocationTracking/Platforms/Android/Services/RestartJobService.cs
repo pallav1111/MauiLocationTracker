@@ -5,7 +5,8 @@ using Android.OS;
 
 namespace LocationTracking.Services;
 
-[Service(Name = "com.locationtracking.RestartJobService", Permission = "android.permission.BIND_JOB_SERVICE", Exported = true)]
+[Service(Name = "com.locationtracking.RestartJobService", Permission = "android.permission.BIND_JOB_SERVICE",
+    Exported = true)]
 public class RestartJobService : JobService
 {
     public override bool OnStartJob(JobParameters? @params)

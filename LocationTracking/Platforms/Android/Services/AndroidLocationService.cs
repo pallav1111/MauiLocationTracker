@@ -12,16 +12,16 @@ using LocationTracking.Models;
 namespace LocationTracking.Services;
 
 /// <summary>
-/// A foreground service that runs location tracking even when the app is backgrounded or killed.
+///     A foreground service that runs location tracking even when the app is backgrounded or killed.
 /// </summary>
 [Service(Enabled = true, Exported = false, ForegroundServiceType = ForegroundService.TypeLocation)]
 public class AndroidLocationService : Service
 {
     public const string ChannelId = "location_tracking_channel";
     public const int NotificationId = 1001;
+    private LocationCallback? _callback;
 
     private IFusedLocationProviderClient? _client;
-    private LocationCallback? _callback;
     private ILocationLogger? _logger;
     private PowerManager.WakeLock? _wakeLock;
 
@@ -30,7 +30,7 @@ public class AndroidLocationService : Service
     public override void OnTaskRemoved(Intent? rootIntent)
     {
         if (ApplicationContext == null) return;
-        
+
         var restartServiceIntent = new Intent(ApplicationContext, typeof(AndroidLocationService));
         restartServiceIntent.SetPackage(PackageName);
 
@@ -70,37 +70,44 @@ public class AndroidLocationService : Service
                 );
                 _wakeLock?.Acquire();
             }
-            
+
             _client = LocationServices.GetFusedLocationProviderClient(this);
-            var options = IPlatformApplication.Current?.Services.GetService(typeof(LocationTrackingOptions)) as LocationTrackingOptions ?? new LocationTrackingOptions();
+            var options =
+                IPlatformApplication.Current?.Services.GetService(typeof(LocationTrackingOptions)) as
+                    LocationTrackingOptions ?? new LocationTrackingOptions();
 
-            var request = new LocationRequest.Builder(GetPriority(options.Accuracy), (long)options.Interval.TotalMilliseconds)
-                .SetMinUpdateIntervalMillis((long)(options.Interval.TotalMilliseconds / 2))
-                .Build();
+            var request =
+                new LocationRequest.Builder(GetPriority(options.Accuracy), (long)options.Interval.TotalMilliseconds)
+                    .SetMinUpdateIntervalMillis((long)(options.Interval.TotalMilliseconds / 2))
+                    .Build();
 
-            _callback = new LocationCallbackImpl(_logger ?? throw new InvalidOperationException("Logger must be initialised."));
+            _callback = new LocationCallbackImpl(_logger ??
+                                                 throw new InvalidOperationException("Logger must be initialised."));
 
-            await _client.RequestLocationUpdatesAsync(request, _callback, Looper.MainLooper ?? throw new InvalidOperationException("Lopper must be initialised."));
+            await _client.RequestLocationUpdatesAsync(request, _callback,
+                Looper.MainLooper ?? throw new InvalidOperationException("Lopper must be initialised."));
         }
         catch (Exception ex)
         {
             Console.WriteLine($"[LocationService] Start error: {ex}");
         }
     }
-    
+
     public override void OnDestroy()
     {
         base.OnDestroy();
-        _client?.RemoveLocationUpdatesAsync(_callback ?? throw new InvalidOperationException("Instance of callback not initialised."));
+        _client?.RemoveLocationUpdatesAsync(_callback ??
+                                            throw new InvalidOperationException(
+                                                "Instance of callback not initialised."));
         if (_wakeLock?.IsHeld ?? false)
         {
             _wakeLock?.Release();
         }
-        
+
         // Schedule restart
         ScheduleRestartJob();
     }
-    
+
     private void ScheduleRestartJob()
     {
         var jobId = 1010;
@@ -113,11 +120,11 @@ public class AndroidLocationService : Service
             ?.SetRequiredNetworkType(NetworkType.Any)
             ?.Build();
 
-        if (jobInfo != null) 
+        if (jobInfo != null)
             jobScheduler?.Schedule(jobInfo);
     }
 
-    
+
     private static int GetPriority(LocationAccuracy accuracy) => accuracy switch
     {
         LocationAccuracy.Lowest => Priority.PriorityLowPower,
@@ -127,7 +134,7 @@ public class AndroidLocationService : Service
         LocationAccuracy.Best => Priority.PriorityHighAccuracy,
         _ => Priority.PriorityBalancedPowerAccuracy
     };
-    
+
     private void RegisterNotificationChannel()
     {
         if (Build.VERSION.SdkInt < BuildVersionCodes.O)

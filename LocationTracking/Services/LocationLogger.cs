@@ -5,7 +5,7 @@ using LocationTracking.Models;
 namespace LocationTracking.Services;
 
 /// <summary>
-/// Logs locations to a local file in JSON format and provides access/export features.
+///     Logs locations to a local file in JSON format and provides access/export features.
 /// </summary>
 internal class LocationLogger : ILocationLogger
 {
@@ -17,7 +17,8 @@ internal class LocationLogger : ILocationLogger
         var localFolder = FileSystem.AppDataDirectory;
         _logFilePath = Path.Combine(localFolder, "tracked_locations.json");
     }
-#region Location Logs
+
+    #region Location Logs
 
     public async Task LogAsync(TrackedLocation location)
     {
@@ -63,7 +64,10 @@ internal class LocationLogger : ILocationLogger
         }
     }
 
-    public Task<string> ExportLogsAsync() => Task.FromResult(_logFilePath);
+    public Task<string> ExportLogsAsync()
+    {
+        return Task.FromResult(_logFilePath);
+    }
 
     private async Task<IEnumerable<TrackedLocation>> ReadLogsInternalAsync()
     {
